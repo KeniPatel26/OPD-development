@@ -161,14 +161,6 @@ export default function LoginButton({ user, login, logout }) {
         gap: '1rem',
       }}
     >
-      <span
-        style={{
-          color: 'var(--text-muted)',
-        }}
-      >
-        Receptionist View
-      </span>
-
       <button
         className="btn btn-primary btn-sm"
         onClick={handleLogin}

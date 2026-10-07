@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPatients, createPatient, getPatientConsultations } from '../services/api';
 import Swal from 'sweetalert2';
@@ -7,13 +7,21 @@ import { useAuth } from '../context/AuthContext';
 export default function Patients() {
   const { user } = useAuth();
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [form, setForm] = useState({ name: '', gender: '', age: '', phone: '' });
   const [historyPatient, setHistoryPatient] = useState(null);
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [search]);
+
   const { data: patients = [] } = useQuery({
-    queryKey: ['patients', search],
-    queryFn: () => getPatients(search)
+    queryKey: ['patients', debouncedSearch],
+    queryFn: () => getPatients(debouncedSearch)
   });
 
   const mutation = useMutation({
