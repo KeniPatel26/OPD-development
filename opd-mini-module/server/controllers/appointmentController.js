@@ -12,14 +12,20 @@ exports.createAppointment = async (req, res) => {
 
 exports.getTodayAppointments = async (req, res) => {
   try {
+    const { doctorId } = req.query;
     const start = new Date();
     start.setHours(0,0,0,0);
     const end = new Date();
     end.setHours(23,59,59,999);
     
-    const appointments = await Appointment.find({
-      appointmentDate: { $gte: start, $lte: end }
-    }).populate('patient', 'name age phone');
+    const query = { appointmentDate: { $gte: start, $lte: end } };
+    if (doctorId) {
+      query.doctor = doctorId;
+    }
+    
+    const appointments = await Appointment.find(query)
+      .populate('patient', 'name age phone')
+      .populate('doctor', 'name specialization');
     res.json(appointments);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -28,7 +34,7 @@ exports.getTodayAppointments = async (req, res) => {
 
 exports.getAppointment = async (req, res) => {
   try {
-    const appointment = await Appointment.findById(req.params.id).populate('patient', 'name age phone gender');
+    const appointment = await Appointment.findById(req.params.id).populate('patient', 'name age phone gender').populate('doctor', 'name specialization');
     res.json(appointment);
   } catch (err) {
     res.status(400).json({ error: err.message });

@@ -14,6 +14,8 @@ connectDB();
 app.use('/api/patients', require('./routes/patientRoutes'));
 app.use('/api/appointments', require('./routes/appointmentRoutes'));
 app.use('/api/consultations', require('./routes/consultationRoutes'));
+app.use('/api/doctors', require('./routes/doctorRoutes'));
+app.use('/api/auth', require('./routes/authRoutes'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

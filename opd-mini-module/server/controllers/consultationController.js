@@ -14,8 +14,17 @@ exports.completeConsultation = async (req, res) => {
 
 exports.getPatientConsultations = async (req, res) => {
   try {
-    const consultations = await Consultation.find({ patient: req.params.patientId }).sort('-completedAt').populate('appointment');
+    const consultations = await Consultation.find({ patient: req.params.patientId }).sort('-completedAt').populate('appointment').populate('doctor', 'name specialization');
     res.json(consultations);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+exports.getConsultationByAppointment = async (req, res) => {
+  try {
+    const consultation = await Consultation.findOne({ appointment: req.params.appointmentId }).populate('doctor', 'name specialization');
+    res.json(consultation);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
